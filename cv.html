@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tạo CV Đơn Giản</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: linear-gradient(135deg, #8e2de2, #4a00e0);
+      padding: 30px;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 720px;
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    input, textarea, button, select {
+      width: 100%;
+      margin-top: 10px;
+      padding: 12px;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #cv-template {
+      display: none;
+      margin-top: 30px;
+      background: #f9f9f9;
+      padding: 25px;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+      color: black;
+    }
+
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+
+    h3 {
+      margin-top: 0;
+      color: #2e7d32;
+    }
+
+    p {
+      margin: 6px 0;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Tạo CV Trực Tuyến</h2>
+
+  <form id="cv-form">
+    <input type="text" id="name" placeholder="Họ và tên" required />
+    <input type="number" id="age" placeholder="Tuổi" required />
+    <select id="gender" required>
+      <option value="">Giới tính</option>
+      <option value="Nam">Nam</option>
+      <option value="Nữ">Nữ</option>
+      <option value="Khác">Khác</option>
+    </select>
+    <input type="email" id="email" placeholder="Email" required />
+    <input type="text" id="phone" placeholder="Số điện thoại" required />
+    <input type="text" id="job" placeholder="Vị trí ứng tuyển" required />
+    <textarea id="summary" placeholder="Giới thiệu bản thân" rows="3"></textarea>
+    <textarea id="experience" placeholder="Kinh nghiệm làm việc" rows="3"></textarea>
+    <textarea id="skills" placeholder="Kỹ năng" rows="3"></textarea>
+    <button type="submit">Tạo CV</button>
+  </form>
+
+  <div id="cv-template">
+    <h3 id="cv-name">[Tên]</h3>
+    <p><strong>Tuổi:</strong> <span id="cv-age"></span></p>
+    <p><strong>Giới tính:</strong> <span id="cv-gender"></span></p>
+    <p><strong>Email:</strong> <span id="cv-email"></span></p>
+    <p><strong>Điện thoại:</strong> <span id="cv-phone"></span></p>
+    <p><strong>Vị trí:</strong> <span id="cv-job"></span></p>
+    <p><strong>Giới thiệu:</strong> <span id="cv-summary"></span></p>
+    <p><strong>Kinh nghiệm:</strong> <span id="cv-experience"></span></p>
+    <p><strong>Kỹ năng:</strong> <span id="cv-skills"></span></p>
+    <button onclick="exportWord()">Tải Word</button>
+  </div>
+</div>
+
+<script>
+  document.getElementById("cv-form").addEventListener("submit", function(e) {
+    e.preventDefault();
+    document.getElementById("cv-name").innerText = document.getElementById("name").value;
+    document.getElementById("cv-age").innerText = document.getElementById("age").value;
+    document.getElementById("cv-gender").innerText = document.getElementById("gender").value;
+    document.getElementById("cv-email").innerText = document.getElementById("email").value;
+    document.getElementById("cv-phone").innerText = document.getElementById("phone").value;
+    document.getElementById("cv-job").innerText = document.getElementById("job").value;
+    document.getElementById("cv-summary").innerText = document.getElementById("summary").value;
+    document.getElementById("cv-experience").innerText = document.getElementById("experience").value;
+    document.getElementById("cv-skills").innerText = document.getElementById("skills").value;
+
+    document.getElementById("cv-template").style.display = "block";
+    document.getElementById("cv-template").scrollIntoView({ behavior: "smooth" });
+  });
+
+  function exportWord() {
+    const element = document.getElementById("cv-template");
+    const content = `
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <style>
+            body {
+              font-family: 'Segoe UI', sans-serif;
+              color: black;
+              padding: 40px;
+              line-height: 1.6;
+              font-size: 14pt;
+            }
+            h1 {
+              font-size: 24pt;
+              text-align: center;
+              margin-bottom: 0;
+            }
+            h2 {
+              font-size: 18pt;
+              margin-bottom: 10px;
+              border-bottom: 1px solid #ccc;
+              padding-bottom: 5px;
+            }
+            p {
+              margin: 6px 0;
+            }
+            .section {
+              margin-top: 20px;
+            }
+            .label {
+              font-weight: bold;
+            }
+          </style>
+        </head>
+        <body>
+          <h1>${document.getElementById("cv-name").innerText}</h1>
+          <h2>${document.getElementById("cv-job").innerText}</h2>
+
+          <div class="section">
+            <h2>Thông tin cá nhân</h2>
+            <p><span class="label">Tuổi:</span> ${document.getElementById("cv-age").innerText}</p>
+            <p><span class="label">Giới tính:</span> ${document.getElementById("cv-gender").innerText}</p>
+            <p><span class="label">Email:</span> ${document.getElementById("cv-email").innerText}</p>
+            <p><span class="label">Số điện thoại:</span> ${document.getElementById("cv-phone").innerText}</p>
+          </div>
+
+          <div class="section">
+            <h2>Giới thiệu bản thân</h2>
+            <p>${document.getElementById("cv-summary").innerText}</p>
+          </div>
+
+          <div class="section">
+            <h2>Kinh nghiệm làm việc</h2>
+            <p>${document.getElementById("cv-experience").innerText}</p>
+          </div>
+
+          <div class="section">
+            <h2>Kỹ năng</h2>
+            <p>${document.getElementById("cv-skills").innerText}</p>
+          </div>
+        </body>
+      </html>
+    `;
+
+    const blob = new Blob(['\ufeff', content], {
+      type: 'application/msword'
+    });
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'CV.doc';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+</script>
+
+</body>
+</html>
