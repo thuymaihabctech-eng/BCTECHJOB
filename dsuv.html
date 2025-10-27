@@ -37,7 +37,7 @@
 			<h1>DANH SÁCH ỨNG TUYỂN</h1>
 		</div>
 		<div class="search-filter">
-    <input type="text" id="search" placeholder="Tìm kiếm ứng viên..." />
+    <input type="text" id="search" placeholder="Tìm kiếm ngành..." />
     
 <div class="custom-select">
   <div class="select-selected">Tất cả chuyên ngành</div>
@@ -299,18 +299,19 @@
 <script>
 	// topbutton
 window.onscroll = function() {
-           const topButton = document.getElementById("topButton");
-           if (document.body.scrollTop > 000 || document.documentElement.scrollTop > 000) {
-               topButton.style.display = "block";
-           } else {
-               topButton.style.display = "none";
-           }
-        };
-        function scrollToTop() {
-           window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-	//
-  document.addEventListener("DOMContentLoaded", function() {
+  const topButton = document.getElementById("topButton");
+  if (document.body.scrollTop > 0 || document.documentElement.scrollTop > 0) {
+    topButton.style.display = "block";
+  } else {
+    topButton.style.display = "none";
+  }
+};
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// main
+document.addEventListener("DOMContentLoaded", function() {
   const toggle = document.querySelector(".menu-toggle");
   const links = document.querySelector(".menu-links");
   if (toggle && links) {
@@ -356,31 +357,51 @@ window.onscroll = function() {
   });
 
   function renderJobs() {
-    const searchTerm = removeVietnameseTones(searchInput.value.trim());
-    const branchSelected = selected.getAttribute("data-value");
+  const searchTerm = removeVietnameseTones(searchInput.value.trim());
+  const branchSelected = selected.getAttribute("data-value");
 
-    allJobCards.forEach(card => {
-      const title = removeVietnameseTones(card.dataset.title);
-      const branch = card.dataset.branch;
+  // sắp xếp 
+  const sortedCards = [...allJobCards].sort((a, b) => {
+    const titleA = removeVietnameseTones(a.dataset.title);
+    const titleB = removeVietnameseTones(b.dataset.title);
+    return titleA.localeCompare(titleB);
+  });
 
-      const matchSearch = title.includes(searchTerm);
-      const matchBranch = (branchSelected === "all" || branchSelected === branch);
+  // Xóa danh sách cũ rồi thêm lại theo thứ tự mới
+  jobList.innerHTML = "";
 
-      card.style.display = (matchSearch && matchBranch) ? "" : "none";
-    });
+  let visibleCount = 0;
 
-    const visibleCount = allJobCards.filter(card => card.style.display !== "none").length;
-    if (visibleCount === 0 && !document.getElementById("no-jobs")) {
-      const message = document.createElement("p");
-      message.id = "no-jobs";
-      message.style.textAlign = "center";
-      message.textContent = "Không tìm thấy ứng viên phù hợp.";
-      jobList.appendChild(message);
+  sortedCards.forEach(card => {
+    const title = removeVietnameseTones(card.dataset.title);
+    const branch = removeVietnameseTones(card.dataset.branch);
+
+    const matchSearch = title.includes(searchTerm) || branch.includes(searchTerm);
+    const matchBranch = (branchSelected === "all" || branchSelected === card.dataset.branch);
+
+    if (matchSearch && matchBranch) {
+      card.style.display = "";
+      jobList.appendChild(card);
+      visibleCount++;
     } else {
-      const noJobs = document.getElementById("no-jobs");
-      if (noJobs) noJobs.remove();
+      card.style.display = "none";
     }
+  });
+
+  // Xử lý thông báo
+  let noJobs = document.getElementById("no-jobs");
+  if (visibleCount === 0) {
+    if (!noJobs) {
+      noJobs = document.createElement("p");
+      noJobs.id = "no-jobs";
+      noJobs.style.textAlign = "center";
+      noJobs.textContent = "Không tìm thấy ứng viên phù hợp.";
+      jobList.appendChild(noJobs);
+    }
+  } else {
+    if (noJobs) noJobs.remove();
   }
+}
 
   // tìm kiếm
   if (searchInput) searchInput.addEventListener("input", renderJobs);
@@ -395,29 +416,29 @@ window.onscroll = function() {
 
 // button tạo portpolio
 document.getElementById('feedbackButton').addEventListener('click', function() {
-    document.getElementById('feedbackForm').classList.remove('hidden');
+  document.getElementById('feedbackForm').classList.remove('hidden');
 });
 
 document.getElementById('closeButton').addEventListener('click', function() {
-    document.getElementById('feedbackForm').classList.add('hidden');
+  document.getElementById('feedbackForm').classList.add('hidden');
 });
 
 document.getElementById('clearButton').addEventListener('click', function() {
-    document.getElementById('feedbackText').value = '';
+  document.getElementById('feedbackText').value = '';
 });
 
 document.getElementById('submitButton').addEventListener('click', function() {
-    const feedback = document.getElementById('feedbackText').value;
-    if (feedback === "") {
-        alert('Nội dung góp ý không được bỏ trống');
-        document.getElementById('feedbackText').value = '';
-        document.getElementById('feedbackForm').classList.add('hidden');
-    } else {
-        var email = 'thuymaihabctech@gmail.com';
-		var subject = 'Feedback from:' ;
-		var body = 'Nội dung portpoolio: ' + feedback;
-		window.location.href = 'mailto: ' + email + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
-    }
+  const feedback = document.getElementById('feedbackText').value;
+  if (feedback === "") {
+    alert('Nội dung góp ý không được bỏ trống');
+    document.getElementById('feedbackText').value = '';
+    document.getElementById('feedbackForm').classList.add('hidden');
+  } else {
+    var email = 'thuymaihabctech@gmail.com';
+    var subject = 'Feedback from:';
+    var body = 'Nội dung portpoolio: ' + feedback;
+    window.location.href = 'mailto:' + email + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+  }
 });
 </script>
 
